@@ -29,15 +29,18 @@ class TWaiter(StreamListener):
 
     def on_status(self, status):
         # Get only the text of the tweet and its ID.
-        text = str(json.dumps(json.loads(status)['text']))
-        id = str(json.dumps(json.loads(status)['id_str']))
-        self.output.write("id:" + " " + id[1:-1] + ", " + "text:" + " " + text[1:-1] + "\n")
+	if str(json.dumps(json.loads(status)['user']['location'])) != "":
+        	text = str(json.dumps(json.loads(status)['text']))
+        	id = str(json.dumps(json.loads(status)['id_str']))
+		loc = str(json.dumps(json.loads(status)['user']['location']))
+		co = str(json.dumps(json.loads(status)['coordinates']))
+        	self.output.write("id:" + " " + id[1:-1] + ", " + "text:" + " " + text[1:-1] +", " +"location: "+loc +", " +"co: "+co + "\n")
 
-        self.counter += 1
+        	self.counter += 1
 
         # For tutorial purposes, only 500 tweets are collected.
         # Increase this number to get bigger data!
-        if self.counter >= 500:
+        if self.counter >= 10:
             self.output.close()
             print "Finished collecting tweets."
             sys.exit()

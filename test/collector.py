@@ -32,7 +32,8 @@ def main(term):
     print "Collecting tweets. Please wait."
 
     try:
-        stream.filter(track=search)
+        #stream.filter(track=search)
+        stream.filter(locations=[-180,-90,180,90])
     except Exception, e:
         print "An error occurred. No tweets collected.", e
         stream.disconnect()
