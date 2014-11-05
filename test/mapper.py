@@ -16,7 +16,7 @@ def word_feats(words):
 def subj(subjLine):
     subjgen = subjLine.lower()
     # Replace term1 with your subject term
-    subj1 = "term1"
+    subj1 = "obama"
     if subjgen.find(subj1) != -1:
         subject = subj1
         return subject

@@ -1,4 +1,4 @@
-import sys,csv
+import sys,csv,pickle
 import nltk
 
 tweets = []
@@ -31,8 +31,11 @@ def start(filename):
 #		print word_features
 		training_set = nltk.classify.apply_features(extract_features, tweets)
 		classifier = nltk.NaiveBayesClassifier.train(training_set)
-		tweet = 'Larry is my friend'
-		print classifier.classify(extract_features(tweet.split()))
+#		tweet = 'Larry is my friend'
+#		print classifier.classify(extract_features(tweet.split()))
+
+		with open("classifier.p", 'wb') as infile:
+			pickle.dump(classifier, infile)
 
 
 def extract_features(tweet):

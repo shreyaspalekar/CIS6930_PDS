@@ -29,12 +29,12 @@ class TWaiter(StreamListener):
 
     def on_status(self, status):
         # Get only the text of the tweet and its ID.
-	if str(json.dumps(json.loads(status)['user']['location'])) != "":
+	if str(json.dumps(json.loads(status)['text'])) == "obama":
         	text = str(json.dumps(json.loads(status)['text']))
         	id = str(json.dumps(json.loads(status)['id_str']))
 		loc = str(json.dumps(json.loads(status)['user']['location']))
 		co = str(json.dumps(json.loads(status)['coordinates']))
-        	self.output.write("id:" + " " + id[1:-1] + ", " + "text:" + " " + text[1:-1] +", " +"location: "+loc +", " +"co: "+co + "\n")
+        	self.output.write(id[1:-1]+","+text[1:-1] +","+loc +","+co+"\n")
 
         	self.counter += 1
 
