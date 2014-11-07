@@ -3,7 +3,8 @@
 # requires Tweepy https://github.com/tweepy/tweepy
 
 from tweepy import StreamListener
-import json, time, sys
+import nltk
+import json, time, sys,random
 
 class TWaiter(StreamListener):
 
@@ -29,14 +30,15 @@ class TWaiter(StreamListener):
 
     def on_status(self, status):
         # Get only the text of the tweet and its ID.
-	if str(json.dumps(json.loads(status)['text'])) == "obama":
-        	text = str(json.dumps(json.loads(status)['text']))
-        	id = str(json.dumps(json.loads(status)['id_str']))
-		loc = str(json.dumps(json.loads(status)['user']['location']))
-		co = str(json.dumps(json.loads(status)['coordinates']))
-        	self.output.write(id[1:-1]+","+text[1:-1] +","+loc +","+co+"\n")
-
-        	self.counter += 1
+#	if "obama" in str(json.dumps(json.loads(status)['text'])).lower():
+       	text = str(json.dumps(json.loads(status)['text']))
+       	id = str(json.dumps(json.loads(status)['id_str']))
+	loc = str(json.dumps(json.loads(status)['user']['location']))
+	co = str(json.dumps(json.loads(status)['coordinates']))
+	proc_text = nltk.tag.pos_tag(text.split())
+	self.output.write(id[1:-1]+", "+str(proc_text[1:-1])+", "+str(random.randint(0, 10)) +", "+loc +", "+co+"\n")
+      	#self.output.write(id[1:-1]+"\t"+str(proc_text[1:-1]) +"\n")
+       	self.counter += 1
 
         # For tutorial purposes, only 500 tweets are collected.
         # Increase this number to get bigger data!

@@ -13,16 +13,16 @@ def word_feats(words):
     return dict([(word, True) for word in words])
 
 
-def subj(subjLine):
-    subjgen = subjLine.lower()
-    # Replace term1 with your subject term
-    subj1 = "obama"
-    if subjgen.find(subj1) != -1:
-        subject = subj1
-        return subject
-    else:
-        subject = "No match"
-        return subject
+#def subj(subjLine):
+#    subjgen = subjLine.lower()
+#    # Replace term1 with your subject term
+#    subj1 = "obama"
+#    if subjgen.find(subj1) != -1:
+#        subject = subj1
+#        return subject
+#    else:
+#        subject = "No match"
+#        return subject
 
 
 def main(argv):
@@ -30,11 +30,13 @@ def main(argv):
     for line in sys.stdin:
         tolk_posset = word_tokenize(line.rstrip())
         d = word_feats(tolk_posset)
-        subjectFull = subj(line)
-        if subjectFull == "No match":
-            print "LongValueSum:" + " " + subjectFull + ": " + "\t" + "1"
-        else:
-            print "LongValueSum:" + " " + subjectFull + ": " + classifier.classify(d) + "\t" + "1"
+	#print d
+#        subjectFull = subj(line)
+        #if subjectFull == "No match":
+         #   print "LongValueSum:" + " " + subjectFull + ": " + "\t" + "1"
+        #else:
+         #   print "LongValueSum:" + " " + subjectFull + ": " + classifier.classify(d) + "\t" + "1"
+        print classifier.classify(d)+ "\t\"" +  line.rstrip() +"\""
 
 
 if __name__ == "__main__":

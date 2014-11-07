@@ -1,1 +1,2 @@
 We have to do event extraction and sentiment analysis on the tweet at the same time.
+event = named entity + verb

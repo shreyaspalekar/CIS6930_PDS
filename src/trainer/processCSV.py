@@ -14,7 +14,7 @@ def start(filename):
 	with open(str(filename[1]), 'rb') as csvfile:
 		reader = csv.reader(csvfile)
 		for row in reader:
-			#print row[0] +" "+row[-1]
+#			print row[0] +" "+row[-1]
 			if row[0] == 4:
 				pos_tweets.append((row[-1],row[0]))
 			if row[0] == 0:
@@ -22,9 +22,9 @@ def start(filename):
 			else :
 				neu_tweets.append((row[-1],row[0]))
 
-			for (words, sentiment) in pos_tweets + neg_tweets + neu_tweets:
-				words_filtered = [e.lower() for e in words.split() if len(e) >= 3 and "http" not in e]
-				tweets.append((words_filtered, sentiment))
+		for (words, sentiment) in pos_tweets + neg_tweets + neu_tweets:
+			words_filtered = [e.lower() for e in words.split() if len(e) >= 3 and "http" not in e]
+			tweets.append((words_filtered, sentiment))
 
 #		print tweets
 		word_features = get_word_features(get_words_in_tweets(tweets))
