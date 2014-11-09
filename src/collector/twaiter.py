@@ -6,6 +6,10 @@ from tweepy import StreamListener
 import nltk
 import json, time, sys,random
 
+sys.path.insert(0, '/home/shreyas/Projects/PDS/src')
+import sentiment_parser
+sentiment_parser.filenameAFINN = '../dictionary/AFINN-111.txt'
+
 class TWaiter(StreamListener):
 
     # see Tweepy for more info
@@ -40,9 +44,11 @@ class TWaiter(StreamListener):
 	proc_tweet['id_str'] = id_str
 	proc_tweet['loc'] = loc
 	proc_tweet['co'] = co
+	(nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text)
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
-	print(json.dumps(proc_tweet))
+	print "text: " + text + " sentiment: " + str(sentiment)
+#	print(json.dumps(proc_tweet))
 #	self.output.write(id_str[1:-1]+", "+text[1:-1]+", "+str(random.randint(0, 10)) +", "+loc +", "+co+"\n")
       	#self.output.write(id[1:-1]+"\t"+str(proc_text[1:-1]) +"\n")
        	self.counter += 1
