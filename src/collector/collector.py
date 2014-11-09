@@ -33,7 +33,8 @@ def main(term):
 
     try:
         #stream.filter(track=search)
-        stream.filter(locations=[-180,-90,180,90])
+        stream.filter(locations=[-180,-90,180,90],languages=["en"])
+#        stream.filter(language=en)
     except Exception, e:
         print "An error occurred. No tweets collected.", e
         stream.disconnect()

@@ -47,7 +47,11 @@ class TWaiter(StreamListener):
 	(nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text)
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
-	print "text: " + text + " sentiment: " + str(sentiment)
+
+
+#	print "event: " + str(nouns+verbs+adjectives+adverbs) + " sentiment: " + str(sentiment)
+
+
 #	print(json.dumps(proc_tweet))
 #	self.output.write(id_str[1:-1]+", "+text[1:-1]+", "+str(random.randint(0, 10)) +", "+loc +", "+co+"\n")
       	#self.output.write(id[1:-1]+"\t"+str(proc_text[1:-1]) +"\n")
@@ -55,7 +59,7 @@ class TWaiter(StreamListener):
 
         # For tutorial purposes, only 500 tweets are collected.
         # Increase this number to get bigger data!
-        if self.counter >= 10:
+        if self.counter >= 1000:
             self.output.close()
             print "Finished collecting tweets."
             sys.exit()
