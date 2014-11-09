@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Map demo</title>
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="datamaps.all.min.js"></script></head>
+<body>
+  <div id="world-map" style="width: 1200px; height: 700px"></div>
+  <script>
+        var map = new Datamap({
+        element: document.getElementById('world-map'),
+        fills: {
+            HIGH: '#afafaf',
+            LOW: '#123456',
+            MEDIUM: 'blue',
+            UNKNOWN: 'rgb(0,0,0)',
+            defaultFill: 'green'
+        },
+        data: {
+            IRL: {
+                numberOfThings: 2002
+            },
+            USA: {
+                numberOfThings: 10381
+            }
+        },
+ 	geographyConfig: {
+            popupTemplate: function(geo, data) {
+		if ( !data )
+                return ['<div class="hoverinfo"><strong>',
+                        'Number of things in ' + geo.properties.name,
+                        ': 0'].join('');
+                
+		return ['<div class="hoverinfo"><strong>',
+                        'Number of things in ' + geo.properties.name,
+                        ': ' + data.numberOfThings,
+                        '</strong></div>'].join('');
+            }
+        }
+    });
+
+    for(var key in map) {
+    	console.log('key: ' + key + '\n' + 'value: ' + map[key]);
+    }
+    //draw a legend for this map
+    map.legend();
+  </script>
+</body>
+</html>
