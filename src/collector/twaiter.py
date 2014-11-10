@@ -4,7 +4,7 @@
 
 from tweepy import StreamListener
 import nltk
-import json, time, sys,random
+import json, time, sys,random,re
 
 sys.path.insert(0, '/home/shreyas/Projects/PDS/src')
 import sentiment_parser
@@ -44,7 +44,8 @@ class TWaiter(StreamListener):
 	proc_tweet['id_str'] = id_str
 	proc_tweet['loc'] = loc
 	proc_tweet['co'] = co
-	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text)
+#	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text.replace("[^\\p{L}\\p{Nd}]+",""))
+	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub(r'[^\x00-\x7F]+','', text))
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
 
