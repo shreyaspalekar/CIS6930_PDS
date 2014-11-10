@@ -45,7 +45,7 @@ class TWaiter(StreamListener):
 	proc_tweet['loc'] = loc
 	proc_tweet['co'] = co
 #	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text.replace("[^\\p{L}\\p{Nd}]+",""))
-	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub(r'[^\x00-\x7F]+','', text))
+	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub('^https?:\/\/.*[\r\n]*','',re.sub(r'[^\x00-\x7F]+','', text))
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
 
