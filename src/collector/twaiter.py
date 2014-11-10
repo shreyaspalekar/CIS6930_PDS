@@ -44,12 +44,13 @@ class TWaiter(StreamListener):
 	proc_tweet['id_str'] = id_str
 	proc_tweet['loc'] = loc
 	proc_tweet['co'] = co
-	(nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text)
+	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text)
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
 
 
-#	print "event: " + str(nouns+verbs+adjectives+adverbs) + " sentiment: " + str(sentiment)
+	#print "entities: " + str(nouns+verbs+adjectives+adverbs) + " sentiment: " + str(sentiment)
+	print "entities: " + str(entities) +" action: "+str(verbs)+" description: "+str(adverbs+adjectives)+" sentiment: " + str(sentiment)
 
 
 #	print(json.dumps(proc_tweet))
