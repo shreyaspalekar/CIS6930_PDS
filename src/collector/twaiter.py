@@ -40,14 +40,16 @@ class TWaiter(StreamListener):
        	id_str = str(json.dumps(json.loads(status)['id_str']))
 	loc = str(json.dumps(json.loads(status)['user']['location']))
 	co = str(json.dumps(json.loads(status)['coordinates']))
-	proc_tweet['text'] = text
 	proc_tweet['id_str'] = id_str
+	proc_tweet['text'] = text
 	proc_tweet['loc'] = loc
 	proc_tweet['co'] = co
+	csvstring = id_str+','+text+','+loc+','+co+'\n'
 #	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text.replace("[^\\p{L}\\p{Nd}]+",""))
 	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub(u'[^\u0000-\uD7FF\uE000-\uFFFF]','',re.sub(r'[^\x00-\x7F]+','', text)))
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
+#	self.output.write(csvstring)
 
 
 	#print "entities: " + str(nouns+verbs+adjectives+adverbs) + " sentiment: " + str(sentiment)

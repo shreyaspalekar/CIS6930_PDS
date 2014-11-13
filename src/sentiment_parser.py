@@ -1,11 +1,16 @@
 #!/usr/bin/python
 
+import cPickle as pickle
 import sys,nltk,re,math
 from nltk.corpus import conll2000
+from nltk.tag.stanford import NERTagger
 
 filenameAFINN = 'dictionary/AFINN-111.txt'
 afinn = dict(map(lambda (w, s): (w, int(s)), [ws.strip().split('\t') for ws in open(filenameAFINN) ]))
-
+classifier = pickle.load(open("classifier/classifier.p", "rb"))
+word_features = pickle.load(open("classifier/word_features.p", "rb"))
+st = NERTagger('/usr/share/stanford-ner/classifiers/english.all.3class.distsim.crf.ser.gz','/usr/share/stanford-ner/stanford-ner.jar') 
+#print word_features
 #test_sents = conll2000.chunked_sents('test.txt',chunk_types=['NP'])
 #train_sents = conll2000.chunked_sents('train.txt',chunk_types=['NP'])
 #chunker = nltk.data.load("chunkers/maxent_ne_chunker/english_ace_multiclass.pickle")
@@ -27,6 +32,16 @@ afinn = dict(map(lambda (w, s): (w, int(s)), [ws.strip().split('\t') for ws in o
 #        return nltk.chunk.conlltags2tree(conlltags)
 
 #chunker = UnigramChunker(train_sents)
+def extract_features(tweet):
+    global word_features
+#    print tweet
+    document_words = set(tweet)
+#    print document_words
+    features = {}
+    for word in word_features:
+        features['contains(%s)' % word] = (word in document_words)
+    return features
+
 
 def sentiment(words):
         """
@@ -34,6 +49,7 @@ def sentiment(words):
         Positive values are positive valence, negative value are negative valence.
         """
         sentiments = map(lambda word: afinn.get(word, 0), words)
+#	print sentiments
         if sentiments:
                 # How should you weight the individual word sentiments?
                 # You could do N, sqrt(N) or 1 for example. Here I use sqrt(N)
@@ -42,6 +58,11 @@ def sentiment(words):
                 sentiment = 0
         return sentiment
 
+def word_feats(words):
+    return dict([(word, True) for word in words])
+
+def c_sentiment(words):
+	return classifier.classify(words)
 
 def parse_line(line):
 	#for line in sys.stdin:
@@ -57,13 +78,48 @@ def parse_line(line):
 
 	t = nltk.ne_chunk(tags, binary=True)
 	for (word_tag,entity) in t.pos():
-		#print str(entity)
 		if str(entity) == "NE":
 			entities.append(word_tag[0])
 #			print word_tag
 #	tree = chunker.parse(tags)
 #	for s in t.subtrees(lambda t: t.height() == 2):
 #		print(s)
+
+
+#	t = st.tag(line[1].split())
+#	print t
+#	for (word_tag,entity) in t:
+#		if str(entity) != "O":
+#			entities.append(word_tag)
+	print entities
+
+	for (word,tag)  in tags:
+		if re.match("NN*", tag):
+			nouns.append(word)
+		elif re.match("JJ*", tag):
+			adjectives.append(word)
+		elif re.match("RB*", tag):
+			adverbs.append(word)
+		elif re.match("VB*", tag):
+			verbs.append(word)
+		else:
+			rest.append(word)
+
+					
+	#print "------------------------------------------------------------------------------------"
+	#print "nouns " + str(nouns)
+	#print "verbs " + str(verbs)
+	#print "adjectives " + str(adjectives)
+	#print "adverbs " + str(adverbs)
+	#print "rest " + str(rest)
+#	print("%6.2f" % (sentiment(adjectives+adverbs)))
+	#print "------------------------------------------------------------------------------------"
+#	print str(adjectives+adverbs+verbs)
+#	print sentiment(extract_features(adjectives+adverbs+verbs))
+#	print c_sentiment(extract_features(line[1]))
+
+	return (entities,nouns,verbs,adjectives,adverbs,rest,sentiment(adjectives+adverbs+verbs))
+
 	print entities
 
 	for (word,tag)  in tags:
@@ -88,7 +144,7 @@ def parse_line(line):
 #	print("%6.2f" % (sentiment(adjectives+adverbs)))
 	#print "------------------------------------------------------------------------------------"
 
-	return (entities,nouns,verbs,adjectives,adverbs,rest,sentiment(adjectives+adverbs+verbs))
+	return (entities,nouns,verbs,adjectives,adverbs,rest,c_sentiment(word_feats(adjectives+adverbs+verbs)))
 
 #		print tags
 #		ne  =  nltk.ne_chunk(tags, binary=True)
