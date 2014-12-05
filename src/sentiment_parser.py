@@ -4,6 +4,7 @@ import cPickle as pickle
 import sys,nltk,re,math
 from nltk.corpus import conll2000
 from nltk.tag.stanford import NERTagger
+import CMUTweetTagger
 
 filenameAFINN = 'dictionary/AFINN-111.txt'
 afinn = dict(map(lambda (w, s): (w, int(s)), [ws.strip().split('\t') for ws in open(filenameAFINN) ]))
@@ -91,7 +92,7 @@ def parse_line(line):
 #	for (word_tag,entity) in t:
 #		if str(entity) != "O":
 #			entities.append(word_tag)
-	print entities
+##	print entities
 
 	for (word,tag)  in tags:
 		if re.match("NN*", tag):
@@ -115,7 +116,7 @@ def parse_line(line):
 #	print("%6.2f" % (sentiment(adjectives+adverbs)))
 	#print "------------------------------------------------------------------------------------"
 #	print str(adjectives+adverbs+verbs)
-#	print sentiment(extract_features(adjectives+adverbs+verbs))
+##	print sentiment(adjectives+adverbs+verbs)
 #	print c_sentiment(extract_features(line[1]))
 
 	return (entities,nouns,verbs,adjectives,adverbs,rest,sentiment(adjectives+adverbs+verbs))
@@ -157,5 +158,43 @@ def parse_line(line):
 			#	for (word,tag) in word_tag:
 			#		print word
 
+def t_parse_line(line):
+	nouns = []
+	verbs =[]
+	adjectives =[]
+	adverbs = []
+	rest = []
+	entities =[]
+	hashtags =[]
+	emotes = []
+	
+	tokens = nltk.word_tokenize(line)
+	tags = nltk.pos_tag(tokens)
+	t = nltk.ne_chunk(tags, binary=True)
+	for (word_tag,entity) in t.pos():
+		if str(entity) == "NE":
+			entities.append(word_tag[0])
+
+	res = CMUTweetTagger.runtagger_parse([line])
+
+	for (word,tag,conf)  in res[0]:
+		if re.match("N", tag):
+			nouns.append(word)
+		elif re.match("A", tag):
+			adjectives.append(word)
+		elif re.match("R", tag):
+			adverbs.append(word)
+		elif re.match("V", tag):
+			verbs.append(word)
+		elif re.match("E", tag):
+			emotes.append(word)
+		elif re.match("#", tag):
+			hashtags.append(word)
+		else:
+			rest.append(word)
+
+	hashwords = [tags[1:] for tags in hashtags]
+	return (entities,nouns,verbs,adjectives,adverbs,rest,sentiment(adjectives+adverbs+verbs+hashwords+emotes))
+
 if __name__ == "__main__":
-    parse_line(sys.argv)
+    parse_line(sys.argv[1])

@@ -9,6 +9,9 @@ import json, time, sys,random,re
 sys.path.insert(0, '/home/shreyas/Projects/PDS/src')
 import sentiment_parser
 sentiment_parser.filenameAFINN = '../dictionary/AFINN-111.txt'
+counter = 0;
+last_time = time.time()
+avg = 0
 
 class TWaiter(StreamListener):
 
@@ -22,7 +25,13 @@ class TWaiter(StreamListener):
         self.deleted  = open('deleted_tweets.txt', 'a')
 
     def on_data(self, data):
-        # The presence of 'in_reply_to_status' indicates a "normal" tweet.
+	global counter;
+	global last_time
+	counter +=1
+#	avg 
+	print "avg tweets per sec: %d" % (counter/(time.time()-last_time))
+	last_time = time.time()
+      # The presence of 'in_reply_to_status' indicates a "normal" tweet.
         # The presence of 'delete' indicates a tweet that was deleted after posting.
         if  'in_reply_to_status' in data:
             self.on_status(data)
@@ -46,16 +55,24 @@ class TWaiter(StreamListener):
 	proc_tweet['co'] = co
 	csvstring = id_str+','+text+','+loc+','+co+'\n'
 #	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(text.replace("[^\\p{L}\\p{Nd}]+",""))
-	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub(u'[^\u0000-\uD7FF\uE000-\uFFFF]','',re.sub(r'[^\x00-\x7F]+','', text)))
+	(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.t_parse_line(re.sub(u'[^\u0000-\uD7FF\uE000-\uFFFF]','',text))
+	##(entities,nouns,verbs,adjectives,adverbs,rest,sentiment) = sentiment_parser.parse_line(re.sub(u'[^\u0000-\uD7FF\uE000-\uFFFF]','',re.sub(r'[^\x00-\x7F]+','', text)))
 #	proc_text = nltk.tag.pos_tag(text.split())
 #	self.output.write(json.dumps(proc_tweet))
 #	self.output.write(csvstring)
 
 
 	#print "entities: " + str(nouns+verbs+adjectives+adverbs) + " sentiment: " + str(sentiment)
-	print "entities: " + str(entities) +" action: "+str(verbs)+" description: "+str(adverbs+adjectives)+" sentiment: " + str(sentiment) + " location: " + str(co)
+#	print "entities: " + str(entities) +" action: "+str(verbs)+" description: "+str(adverbs+adjectives)+" sentiment: " + str(sentiment) + " location: " + str(co)
+
+	try:
+		coor = str(json.dumps((json.loads(status)['coordinates'])['coordinates']))
+		print coor+","+str(sentiment)+","+text+","+str(entities)
+	except:
+		pass
 
 
+#	print co+","+str(sentiment)+","+text+","+str(entities)
 #	print(json.dumps(proc_tweet))
 #	self.output.write(id_str[1:-1]+", "+text[1:-1]+", "+str(random.randint(0, 10)) +", "+loc +", "+co+"\n")
       	#self.output.write(id[1:-1]+"\t"+str(proc_text[1:-1]) +"\n")
@@ -63,7 +80,7 @@ class TWaiter(StreamListener):
 
         # For tutorial purposes, only 500 tweets are collected.
         # Increase this number to get bigger data!
-        if self.counter >= 1000:
+        if self.counter >= 100000:
             self.output.close()
             print "Finished collecting tweets."
             sys.exit()
